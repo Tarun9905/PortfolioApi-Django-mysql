@@ -9,8 +9,13 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+from django.conf.global_settings import SECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,12 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%zb-&qsohvw#$(+3m_9x*2xkdh(5u(@1omj)%stg8h-i3vau9)'
+# SECRET_KEY = 'django-insecure-%zb-&qsohvw#$(+3m_9x*2xkdh(5u(@1omj)%stg8h-i3vau9)'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG','False').lower() == 'true'
 
-ALLOWED_HOSTS = ['portfolio-5-37bz.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(" ")
 
 
 
@@ -75,16 +81,31 @@ WSGI_APPLICATION = 'PortfolioProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'Portfolio',
+#         'USER': 'root',
+#         'HOST': 'localhost',
+#         'PASSWORD': 'hardik3393nunez',
+#         'PORT': '3306',
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Portfolio',
-        'USER': 'root',
-        'HOST': 'localhost',
-        'PASSWORD': 'hardik3393nunez',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'portfolio_django_7c76',
+        'USER': 'portfolio_django_7c76_user',
+        'PASSWORD': 'UPoy7gE6reLoGV6ueww0NciAc62ZdoRY',
+        'HOST': 'dpg-cvtkdl1r0fns73dscfqg-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
+
+# Override default DB settings with DATABASE_URL if available (used by Render)
+database_url = os.environ.get('DATABASE_URL')
+if database_url:
+    DATABASES['default'] = dj_database_url.parse(database_url)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
